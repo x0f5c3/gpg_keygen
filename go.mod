@@ -1,6 +1,6 @@
 module github.com/x0f5c3/gpg_keygen
 
-go 1.21.3
+go 1.21
 
 require (
 	github.com/pterm/pcli v0.4.6
