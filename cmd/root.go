@@ -9,6 +9,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var cfgFile string
+
 var rootCmd = &cobra.Command{
 	Use:   "gpg_keygen",
 	Short: "This software is designed to make gpg operations more ergonomic",
@@ -49,6 +51,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&pterm.PrintDebugMessages, "debug", "", false, "enable debug messages")
 	rootCmd.PersistentFlags().BoolVarP(&pterm.RawOutput, "raw", "", false, "print unstyled raw output (set it if output is written to a file)")
 	rootCmd.PersistentFlags().BoolVarP(&pcli.DisableUpdateChecking, "disable-update-checks", "", false, "disables update checks")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.gpg_keygen.yaml)")
 
 	// Use https://github.com/pterm/pcli to style the output of cobra.
 	pcli.SetRepo("x0f5c3/gpg_keygen")
@@ -58,3 +61,28 @@ func init() {
 	// Change global PTerm theme
 	pterm.ThemeDefault.SectionStyle = *pterm.NewStyle(pterm.FgCyan)
 }
+
+// initConfig reads in config file and ENV variables if set.
+func initConfig() {
+	if cfgFile != "" {
+		// Use config file from the flag.
+		viper.SetConfigFile(cfgFile)
+	} else {
+		// Find home directory.
+		home, err := os.UserHomeDir()
+		pterm.Fatal.PrintOnError(err)
+
+		// Search config in home directory with name ".gpg_keygen" (without extension).
+		viper.AddConfigPath(home)
+		viper.SetConfigType("toml")
+		viper.SetConfigName(".gpg_keygen")
+	}
+
+	viper.AutomaticEnv() // read in environment variables that match
+
+	// If a config file is found, read it in.
+	if err := viper.ReadInConfig(); err == nil {
+		pterm.Success.Printfln("Using config file: %s", viper.ConfigFileUsed())
+	}
+}
+		
