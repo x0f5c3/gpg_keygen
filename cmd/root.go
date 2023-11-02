@@ -13,8 +13,8 @@ import (
 var cfgFile string
 
 var rootCmd = &cobra.Command{
-	Use:   "gpg_keygen",
-	Short: "This software is designed to make gpg operations more ergonomic",
+	Use:     "gpg_keygen",
+	Short:   "This software is designed to make gpg operations more ergonomic",
 	Version: "v0.0.1", // <---VERSION---> Updating this version, will also create a new GitHub release.
 	// Uncomment the following lines if your bare application has an action associated with it:
 	// RunE: func(cmd *cobra.Command, args []string) error {
@@ -55,7 +55,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.gpg_keygen.yaml)")
 
 	// Use https://github.com/pterm/pcli to style the output of cobra.
-	pcli.SetRepo("x0f5c3/gpg_keygen")
+	pterm.Fatal.PrintOnError(pcli.SetRepo("x0f5c3/gpg_keygen"))
 	pcli.SetRootCmd(rootCmd)
 	pcli.Setup()
 
@@ -86,4 +86,3 @@ func initConfig() {
 		pterm.Success.Printfln("Using config file: %s", viper.ConfigFileUsed())
 	}
 }
-		
